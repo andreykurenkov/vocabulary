@@ -89,6 +89,8 @@ class Vocabulary(object):
             response = requests.get(url)
             if response.status_code == 200:
                 return response.json()
+            elif response.status_code == 429:
+                return None
             else:
                 return False
 
@@ -166,7 +168,7 @@ class Vocabulary(object):
         :param source_lang: Defaults to : "en"
         :param dest_lang: Defaults to : "en" For eg: "fr" for french
         :param format: response structure type. Defaults to: "json"
-        :returns: returns a json object as str, False if invalid phrase
+        :returns: returns a json object as str, False if invalid phrase, None if rate limited
         """
         base_url = Vocabulary.__get_api_link("glosbe")
         url = base_url.format(word=phrase, source_lang=source_lang, dest_lang=dest_lang)
@@ -183,7 +185,7 @@ class Vocabulary(object):
             # print(meanings_list)
             # return json.dumps(meanings_list)
         else:
-            return False
+            return json_obj
 
     @staticmethod
     def synonym(phrase, source_lang="en", dest_lang="en", format="json"):
